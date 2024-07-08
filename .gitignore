@@ -3,3 +3,6 @@ modules/bbduk/human_rRNAs.fasta
 modules/star/index/hybrid_annotated_cat.gtf
 modules/bbsplit/index/hybrid_genome.fasta
 modules/bbsplit/index/myco_genome.fasta
+raw_data/
+*.nextflow.log*
+.nextflow
