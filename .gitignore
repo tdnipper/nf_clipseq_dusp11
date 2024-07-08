@@ -6,3 +6,4 @@ modules/bbsplit/index/myco_genome.fasta
 raw_data/
 *.nextflow.log*
 .nextflow
+work
