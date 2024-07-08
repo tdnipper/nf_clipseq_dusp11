@@ -8,7 +8,7 @@ process star_align {
     publishDir "${projectDir}/output/results/transcript_counts", mode: "symlink", pattern: "*toTranscriptome.out.bam"
 
     input:
-    tuple val(sample), path(r1), path(r2)
+    tuple val(sample), path(reads)
     path(index)
 
     output:
@@ -25,7 +25,7 @@ process star_align {
     """
     STAR --runThreadN ${task.cpus} \
     --genomeDir ${index} \
-    --readFilesIn ${r1} ${r2} \
+    --readFilesIn ${reads} \
     --outFileNamePrefix ${sample}_ \
     --quantMode ${params.star_mode} \
     --outReadsUnmapped Fastx \

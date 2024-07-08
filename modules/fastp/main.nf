@@ -9,9 +9,11 @@ process trim {
 
     output:
     tuple val(sample), path(reads), emit: reads
+    path ("*.json"), emit: logs_json
+    path ("*.html"), emit: logs_html
 
     script:
     """
-    fastp -i ${reads[0]} -I ${reads[1]} -o ${sample}_R1_trimmed.fastq.gz -O ${sample}_R2_trimmed.fastq.gz -j ${sample}.json -h ${sample}.html -l 25 -q 20
+    fastp -i ${reads} -o ${sample}_trimmed.fastq.gz -j ${sample}.json -h ${sample}.html -l 25 -q 20
     """
 }
