@@ -1,0 +1,5 @@
+modules/star/index/GRCh38.primary_assembly.genome.fa
+modules/bbduk/human_rRNAs.fasta
+modules/star/index/hybrid_annotated_cat.gtf
+modules/bbsplit/index/hybrid_genome.fasta
+modules/bbsplit/index/myco_genome.fasta
