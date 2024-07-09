@@ -11,7 +11,7 @@ process dedup {
     tuple val(sample), path(sorted_bam), path(bai)
 
     output:
-    tuple val(sample), path("*_dedup.bam"), emit: reads
+    tuple val(sample), path("*_dedup.bam"), path("*.bai") emit: reads
     path("*.log"), emit: logs
 
     script:
@@ -23,4 +23,16 @@ process dedup {
     --log ${sample}_dedup.log \
     --error ${sample}_dedup_error.log
     """
+}
+
+process index {
+    debug = true
+
+    container "tdnipper/bioinformatics:star"
+
+    input: 
+    tuple val(sample), path(reads)
+
+    output:
+    tuple val(sample), path("*.bam"), emit:reads
 }

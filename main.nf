@@ -5,7 +5,7 @@ include {star_index} from "./modules/star/index/main.nf"
 include {star_align} from "./modules/star/align/main.nf"
 include {call_peaks} from "./modules/pureclip/main.nf"
 include {dedup} from "./modules/umi-tools/main.nf"
-include {sort} from "./modules/umi-tools/main.nf"
+include {index} from "./modules/umi-tools/main.nf"
 include {call_peaks} from "./modules/pureclip/main.nf"
 raw_reads = Channel.fromPath(params.raw_reads)
 
