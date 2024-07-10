@@ -1,5 +1,7 @@
 
 process call_peaks {
+
+    debug = true
     
     container "tdnipper/bioinformatics:pureclip"
 
@@ -7,13 +9,13 @@ process call_peaks {
 
     input:
     tuple val(sample), path(reads), path(index)
-    tuple val(sample), path(controlFile)
+    tuple path(ibam), path(ibai)
     output:
     tuple val(sample), path("*_xlinks.bed"), path("*_regions.bed"), emit: peaks
 
     script:
     """
-    pureclip -i ${reads} -bai ${index} -g ${params.hybrid_genome_file} -o ${sample}_xlinks -or ${sample}_regions -nt ${task.cpus}
+    pureclip -i ${reads} -bai ${index} -g ${params.hybrid_genome_file} -o ${sample}_xlinks.bed -or ${sample}_regions.bed -nt ${task.cpus} -nta ${task.cpus} -ibam ${ibam} -ibai ${ibai}
     """
 }
 
