@@ -17,7 +17,7 @@ process call_peaks {
 
     script:
     """
-    pureclip -i ${reads} -bai ${index} -g ${params.hybrid_genome_file} -o ${sample}_xlinks.bed -or ${sample}_regions.bed -ibam ${ibam} -ibai ${ibai} -nt ${task.cpus}
+    pureclip -i ${reads} -bai ${index} -g ${params.hybrid_genome_file} -o ${sample}_xlinks.bed -or ${sample}_regions.bed -ibam ${ibam} -ibai ${ibai} -nt ${task.cpus} -iv 'chr1;chr2;chr3'
     """
 }
 
