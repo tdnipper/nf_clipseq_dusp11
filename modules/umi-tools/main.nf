@@ -1,7 +1,5 @@
 process dedup {
 
-    debug = true
-
     container "tdnipper/bioinformatics:umi-tools"
     containerOptions = '--entrypoint=""'
 
@@ -11,7 +9,7 @@ process dedup {
     tuple val(sample), path(sorted_bam), path(bai)
 
     output:
-    tuple val(sample), path("*_dedup.bam"), path("*.bai") emit: reads
+    tuple val(sample), path("*_dedup.bam"), emit: reads
     path("*.log"), emit: logs
 
     script:
@@ -26,7 +24,6 @@ process dedup {
 }
 
 process index {
-    debug = true
 
     container "tdnipper/bioinformatics:star"
 
@@ -34,5 +31,12 @@ process index {
     tuple val(sample), path(reads)
 
     output:
-    tuple val(sample), path("*.bam"), emit:reads
+    tuple val(sample), path("*.bam"), path("*.bai"), emit: reads
+
+    script:
+    """
+    samtools sort ${reads} -o ${sample}_sorted_dedup.bam -@ ${task.cpus}
+    
+    samtools index ${sample}_sorted_dedup.bam -o ${sample}_sorted_dedup.bai -@ ${task.cpus}
+    """
 }
