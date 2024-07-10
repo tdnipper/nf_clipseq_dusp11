@@ -6,16 +6,18 @@ process call_peaks {
     container "tdnipper/bioinformatics:pureclip"
 
     publishDir "${projectDir}/output/results/pureclip", mode: "symlink", pattern: "*.bed"
+    publishDir "${projectDir}/output/logs/pureclip", mode: "symlink", pattern: "*log*"
 
     input:
     tuple val(sample), path(reads), path(index)
     tuple path(ibam), path(ibai)
     output:
     tuple val(sample), path("*_xlinks.bed"), path("*_regions.bed"), emit: peaks
+    path ("*log*"), emit: logs
 
     script:
     """
-    pureclip -i ${reads} -bai ${index} -g ${params.hybrid_genome_file} -o ${sample}_xlinks.bed -or ${sample}_regions.bed -nt ${task.cpus} -nta ${task.cpus} -ibam ${ibam} -ibai ${ibai}
+    pureclip -i ${reads} -bai ${index} -g ${params.hybrid_genome_file} -o ${sample}_xlinks.bed -or ${sample}_regions.bed -ibam ${ibam} -ibai ${ibai} -nt ${task.cpus}
     """
 }
 
