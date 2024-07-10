@@ -6,7 +6,7 @@ include {star_align} from "./modules/star/align/main.nf"
 include {call_peaks} from "./modules/pureclip/main.nf"
 include {dedup} from "./modules/umi-tools/main.nf"
 include {index} from "./modules/umi-tools/main.nf"
-include {call_peaks} from "./modules/pureclip/main.nf"
+include {combine_control_bam} from "./modules/pureclip/main.nf"
 raw_reads = Channel.fromPath(params.raw_reads)
 
 process reads_with_samplename{
@@ -33,11 +33,13 @@ workflow {
     starIndex = star_index(ribodepleted.collect())
     star = star_align(ribodepleted, starIndex.index)
     deduplicated = dedup(star.sorted_bam).reads
-    dedupSorted = sort(deduplicated).reads
     deduplicated.branch { 
-        control: it[0].contains("Igg")
-        experimental: !it[0].contains("Igg") 
-        }
-        .set { result }
-    peaksCalled = 
+    control: it[0].contains("Igg")
+    experimental: !it[0].contains("Igg") 
+    }
+    .set { result }
+    dedupIndexed = index(result.experimental)
+    inputList = result.control.map { it[1] }.collect()
+    inputClip = combine_control_bam(inputList).combined_bam
+    peaks = call_peaks(dedupIndexed, inputClip)
 }
