@@ -8,3 +8,5 @@ raw_data/
 .nextflow
 work
 output
+modules/star/index/GRCh38.primary_assembly.genome.fa.fai
+modules/star/index/gencode.v46.primary_assembly.annotation.gtf
