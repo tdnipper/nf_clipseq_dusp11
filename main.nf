@@ -7,6 +7,8 @@ include {call_peaks} from "./modules/pureclip/main.nf"
 include {dedup} from "./modules/umi-tools/main.nf"
 include {index} from "./modules/umi-tools/main.nf"
 include {combine_control_bam} from "./modules/pureclip/main.nf"
+include {bed_to_bigwig} from "./modules/bedtools/main.nf"
+include {chrom_size} from "./modules/bedtools/main.nf"
 raw_reads = Channel.fromPath(params.raw_reads)
 
 process reads_with_samplename{
@@ -42,4 +44,6 @@ workflow {
     inputList = result.control.map { it[1] }.collect()
     inputClip = combine_control_bam(inputList).combined_bam
     peaks = call_peaks(dedupIndexed, inputClip)
+    sizeFile = chrom_size(peaks.status.collect()).chromFile
+    bedgraph = bed_to_bigwig(peaks.peaks, sizeFile)
 }
