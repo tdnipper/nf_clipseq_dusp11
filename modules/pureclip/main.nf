@@ -1,11 +1,9 @@
 
 process call_peaks {
-
-    debug = true
     
     container "tdnipper/bioinformatics:pureclip"
 
-    publishDir "${projectDir}/output/results/pureclip", mode: "symlink", pattern: "*.bed"
+    publishDir "${projectDir}/output/results/pureclip/bed", mode: "symlink", pattern: "*.bed"
     // publishDir "${projectDir}/output/logs/pureclip", mode: "symlink", pattern: "*log*"
 
     input:
@@ -14,6 +12,7 @@ process call_peaks {
     output:
     tuple val(sample), path("*_xlinks.bed"), path("*_regions.bed"), emit: peaks
     // path ("*log*"), emit: logs
+    val(true), emit: status
 
     script:
     """
