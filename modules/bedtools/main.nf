@@ -58,25 +58,27 @@ process chrom_size {
     """
 }
 
-// process get_xlinks {
-//     container "tdnipper/bioinformatics:bedtools"
-
-//     publishDir "${projectDir}/output/xlinks", mode: "symlink", pattern: "*.bedgraph"
-
-//     input:
-//     tuple val(sample), path(reads)
-// }
-
-process bed_to_bedgraph {
+process get_xlinks {
     container "tdnipper/bioinformatics:bedtools"
 
-    publishDir "${projectDir}/output/results/pureclip/bedgraph"
+    publishDir "${projectDir}/output/xlinks", mode: "symlink", pattern: "*.bedgraph.gz"
 
     input:
     tuple val(sample), path(reads)
 
     output:
+    tuple val(sample), path("*.bedgraph.gz")
 
     script:
-    
+    """
+    bedtools bamtobed -i ${reads} > dedup.bed
+
+    bedtools shift -m 1 -p -1 -i dedup.bed -g ${params.hybrid_genome_file}.fai > shifted.bed
+
+    bedtools genomecov -dz -strand + -5 -i shifted.bed -g ${params.hybrid_genome_file}.fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "+"}' > pos.bed
+    bedtools genomecov -dz -strand - -5 -i shifted.bed -g ${params.hybrid_genome_file}.fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "-"}' > neg.bed
+    cat pos.bed neg.bed | sort -k1,1 -k2,2n | gzip > ${sample}.xlinks.bed.gz
+
+    zcat ${sample}_xlinks.bed.gz | awk '{OFS = "\t"}{print \$1, \$2, \$3, \$5} | gzip > ${sample}_xlinks.bedgraph.gz
+    """
 }
