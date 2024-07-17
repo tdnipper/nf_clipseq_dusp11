@@ -11,6 +11,8 @@ include {bed_to_bigwig} from "./modules/bedtools/main.nf"
 include {chrom_size} from "./modules/bedtools/main.nf"
 raw_reads = Channel.fromPath(params.raw_reads)
 
+callers = params.peakcaller.split(",").collect()
+
 process reads_with_samplename{
     // This process takes a channel of filepaths and returns a channel of tuple (samplename), (filepath) for downstream ease of naming
     input: 
@@ -35,15 +37,18 @@ workflow {
     starIndex = star_index(ribodepleted.collect())
     star = star_align(ribodepleted, starIndex.index)
     deduplicated = dedup(star.sorted_bam).reads
-    deduplicated.branch { 
-    control: it[0].contains("Igg")
-    experimental: !it[0].contains("Igg") 
+    // deduplicated.branch { 
+    // control: it[0].contains("Igg")
+    // experimental: !it[0].contains("Igg") 
+    // }
+    // .set { result }
+    // dedupIndexed = index(result.experimental)
+    dedupIndexed = index(deduplicated)
+    // inputList = result.control.map { it[1] }.collect()
+    // inputClip = combine_control_bam(inputList).combined_bam
+    if ("pureclip" in callers) {
+        peaks = call_peaks(dedupIndexed)
     }
-    .set { result }
-    dedupIndexed = index(result.experimental)
-    inputList = result.control.map { it[1] }.collect()
-    inputClip = combine_control_bam(inputList).combined_bam
-    peaks = call_peaks(dedupIndexed, inputClip)
-    sizeFile = chrom_size(peaks.status.collect()).chromFile
-    bedgraph = bed_to_bigwig(peaks.peaks, sizeFile)
+    // sizeFile = chrom_size(peaks.status.collect()).chromFile
+    // bedgraph = bed_to_bigwig(peaks.peaks, sizeFile)
 }
