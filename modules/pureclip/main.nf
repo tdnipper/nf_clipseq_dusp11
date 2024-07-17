@@ -3,15 +3,12 @@ process call_peaks {
     
     container "tdnipper/bioinformatics:pureclip"
 
-    publishDir "${projectDir}/output/results/pureclip/bed", mode: "symlink", pattern: "*.bed"
-    // publishDir "${projectDir}/output/logs/pureclip", mode: "symlink", pattern: "*log*"
+    publishDir "${projectDir}/output/results/pureclip/bed", mode: "symlink", pattern: "*.bed.gz"
 
     input:
     tuple val(sample), path(reads), path(index)
-    // tuple path(ibam), path(ibai)
     output:
     tuple val(sample), path("*_xlinks.bed.gz"), path("*_regions.bed.gz"), emit: peaks
-    // path ("*log*"), emit: logs
     val(true), emit: status
 
     script:
@@ -23,7 +20,6 @@ process call_peaks {
     gzip ${sample}_regions.bed
     """
 }
-// pureclip cut out : -ibam ${ibam} -ibai ${ibai} 
 
 process combine_control_bam {
     container "tdnipper/bioinformatics:star"
