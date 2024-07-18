@@ -10,6 +10,7 @@ include {combine_control_bam} from "./modules/pureclip/main.nf"
 // include {bed_to_bigwig} from "./modules/bedtools/main.nf"
 // include {chrom_size} from "./modules/bedtools/main.nf"
 include {get_xlinks} from "./modules/bedtools/main.nf"
+include {paraclu_call_peaks} from "./modules/paraclu/main.nf"
 raw_reads = Channel.fromPath(params.raw_reads)
 
 callers = params.peakcaller.split(",").collect()
@@ -45,9 +46,12 @@ workflow {
     // .set { result }
     // dedupIndexed = index(result.experimental)
     dedupIndexed = index(deduplicated)
-    get_xlinks(star.sorted_bam)
+    ch_xlinks = get_xlinks(star.sorted_bam).bed
     // inputList = result.control.map { it[1] }.collect()
     // inputClip = combine_control_bam(inputList).combined_bam
+    if ("paraclu" in callers) {
+        paraclu_peaks = paraclu_call_peaks(ch_xlinks)
+    }
     if ("pureclip" in callers) {
         peaks = call_peaks(dedupIndexed)
     }
