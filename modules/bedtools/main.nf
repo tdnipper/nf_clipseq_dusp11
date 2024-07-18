@@ -1,8 +1,6 @@
 process bed_to_bigwig {
     container "tdnipper/bioinformatics:bedtools"
 
-    debug = true
-
     publishDir "${projectDir}/output/results/pureclip/bedgraph", mode: "symlink", pattern: "*_sort_merged.bedgraph"
     publishDir "${projectDir}/output/results/pureclip/bigwig", mode: "symlink", pattern: "*.bw"
 
@@ -41,7 +39,6 @@ process bed_to_bigwig {
 process chrom_size {
     container "tdnipper/bioinformatics:star"
 
-    debug = true
 
     publishDir "${projectDir}/output/test", mode: "symlink", pattern: "hg38.chrom.sizes"
 
@@ -61,13 +58,14 @@ process chrom_size {
 process get_xlinks {
     container "tdnipper/bioinformatics:bedtools"
 
-    publishDir "${projectDir}/output/xlinks", mode: "symlink", pattern: "*.bedgraph.gz"
+    publishDir "${projectDir}/output/results/xlinks", mode: "symlink", pattern: "*.bedgraph.gz"
 
     input:
-    tuple val(sample), path(reads)
+    tuple val(sample), path(reads), path(bai)
 
     output:
-    tuple val(sample), path("*.bedgraph.gz")
+    tuple val(sample), path("*_xlinks.bed.gz"), emit: bed
+    tuple val(sample), path("*.bedgraph.gz"), emit: xlinks
 
     script:
     """
@@ -77,8 +75,8 @@ process get_xlinks {
 
     bedtools genomecov -dz -strand + -5 -i shifted.bed -g ${params.hybrid_genome_file}.fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "+"}' > pos.bed
     bedtools genomecov -dz -strand - -5 -i shifted.bed -g ${params.hybrid_genome_file}.fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "-"}' > neg.bed
-    cat pos.bed neg.bed | sort -k1,1 -k2,2n | gzip > ${sample}.xlinks.bed.gz
+    cat pos.bed neg.bed | sort -k1,1 -k2,2n | gzip > ${sample}_xlinks.bed.gz
 
-    zcat ${sample}_xlinks.bed.gz | awk '{OFS = "\t"}{print \$1, \$2, \$3, \$5} | gzip > ${sample}_xlinks.bedgraph.gz
+    zcat ${sample}_xlinks.bed.gz | awk '{OFS = "\t"}{print \$1, \$2, \$3, \$5}' | gzip > ${sample}_xlinks.bedgraph.gz
     """
 }
