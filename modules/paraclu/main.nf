@@ -1,4 +1,7 @@
 process paraclu_call_peaks {
+
+    stageInMode "copy" // copy .gz files in so this can be rerun without consuming original files
+
     container "tdnipper/bioinformatics:paraclu"
 
     debug = true
@@ -16,7 +19,7 @@ process paraclu_call_peaks {
     min_density_increase = params.min_density_increase
     max_cluster_length = params.max_cluster_length
     """
-    pigz -d -c ${reads} > ${sample}.bed
+    pigz -d -c ${reads} > ${sample}.bed | \\
     awk '{OFS = "\t"}{print \$1, \$6, \$3, \$5}' | \\
     sort -k1,1 -k2,2 -k3,3n > paraclu_input.tsv
 
