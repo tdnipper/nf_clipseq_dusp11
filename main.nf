@@ -39,22 +39,12 @@ workflow {
     starIndex = star_index(ribodepleted.collect())
     star = star_align(ribodepleted, starIndex.index)
     deduplicated = dedup(star.sorted_bam).reads
-    // deduplicated.branch { 
-    // control: it[0].contains("Igg")
-    // experimental: !it[0].contains("Igg") 
-    // }
-    // .set { result }
-    // dedupIndexed = index(result.experimental)
-    dedupIndexed = index(deduplicated)
+    dedupIndexed = index(deduplicated).reads
     ch_xlinks = get_xlinks(star.sorted_bam).bed
-    // inputList = result.control.map { it[1] }.collect()
-    // inputClip = combine_control_bam(inputList).combined_bam
     if ("paraclu" in callers) {
         paraclu_peaks = paraclu_call_peaks(ch_xlinks)
     }
     if ("pureclip" in callers) {
         peaks = call_peaks(dedupIndexed)
     }
-    // sizeFile = chrom_size(peaks.status.collect()).chromFile
-    // bedgraph = bed_to_bigwig(peaks.peaks, sizeFile)
 }
