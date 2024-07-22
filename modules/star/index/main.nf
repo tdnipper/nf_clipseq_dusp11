@@ -3,7 +3,7 @@ annotationFile = file(params.annotation_file)
 
 process star_index {
     
-    container "tdnipper/bioinformatics:star_0.2"
+    container "tdnipper/bioinformatics:star"
 
     input:
     val(signal)
