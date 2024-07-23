@@ -11,6 +11,10 @@ include {combine_control_bam} from "./modules/pureclip/main.nf"
 // include {chrom_size} from "./modules/bedtools/main.nf"
 include {get_xlinks} from "./modules/bedtools/main.nf"
 include {paraclu_call_peaks} from "./modules/paraclu/main.nf"
+include {get_segments} from "./modules/icount/main.nf"
+include {icount_call_peaks} from "./modules/icount/main.nf"
+include {clipper_bedfile} from "./modules/clipper/main.nf"
+include {clipper_call_peaks} from "./modules/clipper/main.nf"
 raw_reads = Channel.fromPath(params.raw_reads)
 
 callers = params.peakcaller.split(",").collect()
@@ -46,5 +50,13 @@ workflow {
     }
     if ("pureclip" in callers) {
         peaks = call_peaks(dedupIndexed)
+    }
+    if ("iCount" in callers) {
+        icount_segments_ch = get_segments(ch_xlinks.collect())
+        icount_peaks = icount_call_peaks(ch_xlinks, icount_segments_ch)
+    }
+    if ("clipper" in callers) {
+        clipper_bed_ch = clipper_bedfile(ch_xlinks.collect())
+        clipper_peaks = clipper_call_peaks(ch_xlinks, clipper_bedfile)
     }
 }
