@@ -57,6 +57,6 @@ workflow {
     }
     if ("clipper" in callers) {
         clipper_bed_ch = clipper_bedfile(ch_xlinks.collect())
-        clipper_peaks = clipper_call_peaks(ch_xlinks, clipper_bedfile)
+        clipper_peaks = clipper_call_peaks(dedupIndexed, clipper_bed_ch)
     }
 }
