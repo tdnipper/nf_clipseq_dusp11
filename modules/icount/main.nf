@@ -15,9 +15,12 @@ process icount_call_peaks {
     // xlinks already found in get_xlinks bedtools process, will just call peaks and get clusters
     """
     pigz -d -c ${xlinks_bed} > unzipped_xlinks.bed
+    
     iCount peaks ${segment} unzipped_xlinks.bed ${sample}_peaks.bed --scores ${sample}_scores.tsv
-    iCount clusters unzipped_xlinks.bed ${sample}_peaks.bed ${sample}_clusters.bed
-    pigz ${sample}_peaks.bed ${sample}_clusters.bed
+    
+    pigz ${sample}_peaks.bed
+
+    rm unzipped_xlinks.bed
     """
 }
 
