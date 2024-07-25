@@ -56,7 +56,6 @@ workflow {
         icount_peaks = icount_call_peaks(ch_xlinks, icount_segments_ch)
     }
     if ("clipper" in callers) {
-        clipper_bed_ch = clipper_bedfile(ch_xlinks.collect())
-        clipper_peaks = clipper_call_peaks(dedupIndexed, clipper_bed_ch)
+        clipper_peaks = clipper_call_peaks(dedupIndexed)
     }
 }

@@ -4,7 +4,6 @@ process clipper_call_peaks {
 
     input:
     tuple val(sample), path(bam), path(bai)
-    path(bed12)
 
     output:
     tuple val(sample), path("*.bed.gz")
