@@ -1,6 +1,5 @@
 process clipper_call_peaks {
-    container "brianyee/clipper:6594e71"
-
+    container "tdnipper/bioinformatics:clipper"
     publishDir "${projectDir}/output/results/clipper", mode: "symlink", pattern: "*.bed.gz"
 
     input:
@@ -12,12 +11,9 @@ process clipper_call_peaks {
 
     script:
     """
-    pigz -d -c ${bam} > unzipped.bam
-    clipper -b unzipped.bam -o ${sample}.bed --species GRCh38
+    clipper -b ${bam} -o ${sample}.bed -s GRCh38_v29
     
     pigz ${sample}.bed
-
-    rm unzipped.bam
     """
 }
 
