@@ -13,6 +13,9 @@ include {get_segments} from "./modules/icount/main.nf"
 include {icount_call_peaks} from "./modules/icount/main.nf"
 include {clipper_bedfile} from "./modules/clipper/main.nf"
 include {clipper_call_peaks} from "./modules/clipper/main.nf"
+include {interleave_for_streme} from "./modules/MEME/main.nf"
+include {subsample_for_streme} from "./modules/MEME/main.nf"
+include {get_streme_motifs} from "./modules/MEME/main.nf"
 raw_reads = Channel.fromPath(params.raw_reads)
 
 callers = params.peakcaller.split(",").collect()
@@ -56,4 +59,11 @@ workflow {
     if ("clipper" in callers) {
         clipper_peaks = clipper_call_peaks(dedupIndexed)
     }
+    ch_interleaved = interleave_for_streme(ribodepleted)
+    ch_interleaved.branch {
+        control: it[0].contains("Igg")
+        experimental: !it[0].contains("Igg")
+    }.set { ch_interleaved_split }
+    ch_subsampled = subsample_for_streme(ch_interleaved_split.experimental)   
+    ch_streme_motifs = get_streme_motifs(ch_subsampled)
 }
