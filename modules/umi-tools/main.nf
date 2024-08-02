@@ -25,6 +25,8 @@ process dedup {
 
 process index {
 
+    maxForks = 1
+
     container "tdnipper/bioinformatics:star"
 
     input: 
