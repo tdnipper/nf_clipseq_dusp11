@@ -60,9 +60,10 @@ workflow {
         clipper_peaks = clipper_call_peaks(dedupIndexed)
     }
     ch_interleaved = interleave_for_streme(ribodepleted)
+    control_group = params.control_group
     ch_interleaved.branch {
-        control: it[0].contains("Igg")
-        experimental: !it[0].contains("Igg")
+        control: it[0].contains(control_group)
+        experimental: !it[0].contains(control_group)
     }.set { ch_interleaved_split }
     ch_subsampled = subsample_for_streme(ch_interleaved_split.experimental)   
     ch_streme_motifs = get_streme_motifs(ch_subsampled)
