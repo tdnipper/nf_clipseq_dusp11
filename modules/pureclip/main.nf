@@ -13,7 +13,7 @@ process call_peaks {
 
     script:
     """
-    pureclip -i ${reads} -bai ${index} -g ${params.hybrid_genome_file} -o ${sample}_xlinks.bed -or ${sample}_regions.bed -nt ${executor.cpus} -iv 'chr1;chr2;chr3'
+    pureclip -i ${reads} -bai ${index} -g ${params.hybrid_genome_file} -o ${sample}_xlinks.bed -or ${sample}_regions.bed -nt ${params.cpus} -iv 'chr1;chr2;chr3'
 
     gzip ${sample}_xlinks.bed
 
@@ -32,10 +32,10 @@ process combine_control_bam {
 
     script:
     """
-    samtools merge -o combined_input.bam ${files} -@ ${executor.cpus}
+    samtools merge -o combined_input.bam ${files} -@ ${params.cpus}
 
-    samtools sort -o combined_input_sorted.bam combined_input.bam -@ ${executor.cpus}
+    samtools sort -o combined_input_sorted.bam combined_input.bam -@ ${params.cpus}
 
-    samtools index -o combined_input_sorted.bai combined_input_sorted.bam -@ ${executor.cpus}
+    samtools index -o combined_input_sorted.bai combined_input_sorted.bam -@ ${params.cpus}
     """
 }

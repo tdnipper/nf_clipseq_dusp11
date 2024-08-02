@@ -7,11 +7,12 @@ process get_streme_motifs {
     tuple val(sample), path(fasta)
 
     output:
+    path("*")
 
     script:
     control_file = "${projectDir}/modules/MEME/hybrid_transcripts.fa"
     """
-    streme --rna --oc out --p ${fasta}
+    streme --rna --oc ${sample} --p ${fasta}
     """
 }
 
