@@ -38,13 +38,19 @@ process reads_with_samplename{
 
 workflow {
     reads = reads_with_samplename(raw_reads)
+    
     fastqc(reads)
+    
     trimmed = trim(reads).reads
+    
     ribodepleted = bbduk(trimmed).ribodepleted_reads
+    
     starIndex = star_index(ribodepleted.collect())
     star = star_align(ribodepleted, starIndex.index)
+    
     deduplicated = dedup(star.sorted_bam).reads
     dedupIndexed = index(deduplicated).reads
+    
     ch_xlinks = get_xlinks(star.sorted_bam).bed
     if ("paraclu" in callers) {
         paraclu_peaks = paraclu_call_peaks(ch_xlinks)
@@ -59,6 +65,7 @@ workflow {
     if ("clipper" in callers) {
         clipper_peaks = clipper_call_peaks(dedupIndexed)
     }
+    
     ch_interleaved = interleave_for_streme(ribodepleted)
     control_group = params.control_group
     ch_interleaved.branch {
