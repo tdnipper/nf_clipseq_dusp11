@@ -25,7 +25,7 @@ process star_align {
 
     script:
     """
-    STAR --runThreadN ${task.cpus} \
+    STAR --runThreadN ${executor.cpus} \
     --genomeDir ${index} \
     --readFilesIn ${reads} \
     --outFileNamePrefix ${sample}_ \
@@ -33,13 +33,13 @@ process star_align {
     --outReadsUnmapped Fastx \
     --readFilesCommand zcat
 
-    samtools view ${sample}_Aligned.out.sam -o ${sample}_aligned.bam -@ ${task.cpus}
+    samtools view ${sample}_Aligned.out.sam -o ${sample}_aligned.bam -@ ${executor.cpus}
 
     rm ${sample}_Aligned.out.sam
 
-    samtools sort ${sample}_aligned.bam -o ${sample}_coord_sorted.bam -@ ${task.cpus}
+    samtools sort ${sample}_aligned.bam -o ${sample}_coord_sorted.bam -@ ${executor.cpus}
 
-    samtools index ${sample}_coord_sorted.bam -@ ${task.cpus}
+    samtools index ${sample}_coord_sorted.bam -@ ${executor.cpus}
 
     """
 

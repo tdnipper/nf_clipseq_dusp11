@@ -13,7 +13,7 @@ process star_index {
 
     script:
     """
-    STAR --runMode genomeGenerate --runThreadN ${task.cpus} --genomeDir star_index --genomeFastaFiles ${genomeFile} --sjdbGTFfile ${annotationFile} 
+    STAR --runMode genomeGenerate --runThreadN ${executor.cpus} --genomeDir star_index --genomeFastaFiles ${genomeFile} --sjdbGTFfile ${annotationFile} 
     """
     
 }

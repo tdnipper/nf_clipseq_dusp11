@@ -35,8 +35,8 @@ process index {
 
     script:
     """
-    samtools sort ${reads} -o ${sample}_sorted_dedup.bam -@ ${task.cpus}
+    samtools sort ${reads} -o ${sample}_sorted_dedup.bam -@ ${executor.cpus}
     
-    samtools index ${sample}_sorted_dedup.bam -o ${sample}_sorted_dedup.bai -@ ${task.cpus}
+    samtools index ${sample}_sorted_dedup.bam -o ${sample}_sorted_dedup.bai -@ ${executor.cpus}
     """
 }
