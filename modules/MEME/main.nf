@@ -21,6 +21,7 @@ process interleave_for_streme {
 
     input:
     tuple val(sample), path(fasta)
+    val(signal)
 
     output:
     tuple val(sample), path("*.interleaved.fasta")
