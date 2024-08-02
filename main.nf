@@ -66,7 +66,7 @@ workflow {
         clipper_peaks = clipper_call_peaks(dedupIndexed)
     }
     
-    ch_interleaved = interleave_for_streme(ribodepleted)
+    ch_interleaved = interleave_for_streme(ribodepleted, dedupIndexed.collect())
     control_group = params.control_group
     ch_interleaved.branch {
         control: it[0].contains(control_group)
