@@ -51,7 +51,7 @@ workflow {
     deduplicated = dedup(star.sorted_bam).reads
     dedupIndexed = index(deduplicated).reads
     
-    ch_xlinks = get_xlinks(star.sorted_bam).bed
+    ch_xlinks = get_xlinks(deduplicated).bed
     if ("paraclu" in callers) {
         paraclu_peaks = paraclu_call_peaks(ch_xlinks)
     }
