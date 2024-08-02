@@ -1,5 +1,7 @@
 process star_align {
 
+    maxForks = 1
+
     container "tdnipper/bioinformatics:star"
 
     publishDir "${workflow.projectDir}/output/logs/star", mode: 'symlink', pattern: "*Log.out"
