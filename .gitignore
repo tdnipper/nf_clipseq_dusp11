@@ -10,3 +10,6 @@ work
 output
 modules/star/index/GRCh38.primary_assembly.genome.fa.fai
 modules/star/index/gencode.v46.primary_assembly.annotation.gtf
+modules/MEME/gencode.v46.transcripts.fa
+modules/MEME/hybrid_transcripts.fa
+modules/MEME/WSN_transcripts.fasta
