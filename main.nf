@@ -48,10 +48,10 @@ workflow {
     starIndex = star_index(ribodepleted.collect())
     star = star_align(ribodepleted, starIndex.index)
     
-    deduplicated = dedup(star.sorted_bam).reads
+    deduplicated = dedup(star.sorted_bam, star.sorted_bam.collect()).reads
     dedupIndexed = index(deduplicated).reads
     
-    ch_xlinks = get_xlinks(deduplicated).bed
+    ch_xlinks = get_xlinks(dedupIndexed).bed
     if ("paraclu" in callers) {
         paraclu_peaks = paraclu_call_peaks(ch_xlinks)
     }
