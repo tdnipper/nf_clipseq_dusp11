@@ -7,6 +7,7 @@ process dedup {
 
     input:
     tuple val(sample), path(sorted_bam), path(bai)
+    val (signal)
 
     output:
     tuple val(sample), path("*_dedup.bam"), emit: reads
