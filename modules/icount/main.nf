@@ -1,5 +1,22 @@
+process icount_get_xlinks {
+    container "docker.io/tomazc/icount"
+
+    input:
+    tuple val(sample), path(reads)
+
+    output:
+    tuple val(sample), path("*.bed*"), emit: xlinks
+
+    publishDir "output/results/iCount/xlinks", method: "symlink", pattern: "*.bed"
+
+    script:
+    """
+    iCount xlinks ${reads} ${sample}_unique.bed ${sample}_multiple.bed ${sample}_skipped.bed
+    """
+}
+
 process icount_call_peaks {
-    container "tdnipper/bioinformatics:iCount"
+    container "docker.io/tomazc/icount"
 
     publishDir "output/results/iCount", method: "symlink", pattern: "*.tsv"
     publishDir "output/results/iCount", method: "symlink", pattern: "*.bed.gz"
@@ -13,19 +30,13 @@ process icount_call_peaks {
 
     script:
     // xlinks already found in get_xlinks bedtools process, will just call peaks and get clusters
-    """
-    pigz -d -c ${xlinks_bed} > unzipped_xlinks.bed
-    
-    iCount peaks ${segment} unzipped_xlinks.bed ${sample}_peaks.bed --scores ${sample}_scores.tsv
-    
-    pigz ${sample}_peaks.bed
-
-    rm unzipped_xlinks.bed
+    """    
+    iCount peaks ${segment} ${xlinks_bed} ${sample}_peaks.bed --scores ${sample}_scores.tsv
     """
 }
 
 process get_segments {
-    container "tdnipper/bioinformatics:iCount"
+    container "docker.io/tomazc/icount"
 
     debug = true
 

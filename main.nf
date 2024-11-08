@@ -10,6 +10,7 @@ include {combine_control_bam} from "./modules/pureclip/main.nf"
 include {get_xlinks} from "./modules/bedtools/main.nf"
 include {paraclu_call_peaks} from "./modules/paraclu/main.nf"
 include {get_segments} from "./modules/icount/main.nf"
+include {icount_get_xlinks} from "./modules/icount/main.nf"
 include {icount_call_peaks} from "./modules/icount/main.nf"
 include {clipper_bedfile} from "./modules/clipper/main.nf"
 include {clipper_call_peaks} from "./modules/clipper/main.nf"
@@ -59,8 +60,9 @@ workflow {
         peaks = call_peaks(dedupIndexed)
     }
     if ("iCount" in callers) {
-        icount_segments_ch = get_segments(ch_xlinks.collect())
-        icount_peaks = icount_call_peaks(ch_xlinks, icount_segments_ch)
+        icount_xlinks_ch = icount_get_xlinks(dedupIndexed)
+        icount_segments_ch = get_segments(icount_xlinks_ch.collect())
+        icount_peaks = icount_call_peaks(icount_xlinks_ch, icount_segments_ch)
     }
     if ("clipper" in callers) {
         clipper_peaks = clipper_call_peaks(dedupIndexed)
